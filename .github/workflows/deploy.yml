@@ -1,0 +1,26 @@
+name: deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+
+  deploy_source:
+    name: deploy lambda from source
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Zip
+        uses: vimtor/action-zip@v1
+        with:
+          files: index.js
+          dest: lambda.zip
+      - name: Upload lambda.zip
+        uses: yvesgurcan/deploy-lambda-function@v0.0.5
+        with:
+          package: lambda.zip
+          function-name: signup
+          AWS_REGION: us-east-1
+          AWS_SECRET_ID: ${{ secrets.AWS_SECRET_ID }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
